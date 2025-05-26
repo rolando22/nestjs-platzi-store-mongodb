@@ -8,52 +8,57 @@ import {
   Put,
 } from '@nestjs/common';
 
+import { ProductsService } from 'src/services/products/products.service';
+
 @Controller('products')
 export class ProductsController {
+  constructor(private productsService: ProductsService) {}
+
   @Get()
   getAll() {
+    const products = this.productsService.findAll();
+
     return {
-      data: [],
+      data: products,
     };
   }
 
   @Get(':id')
   getOne(@Param('id') id: string) {
+    const product = this.productsService.findOne(id);
+
     return {
-      data: {
-        id,
-      },
+      data: product,
     };
   }
 
   @Post()
   create(@Body() body: any) {
+    const newProduct = this.productsService.create(body);
+
     return {
       message: 'Product created successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: body,
+      data: newProduct,
     };
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() body: any) {
+    const product = this.productsService.update(id, body);
+
     return {
       message: 'Product updated successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: {
-        id,
-        ...body,
-      },
+      data: product,
     };
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
+    const product = this.productsService.delete(id);
+
     return {
       message: 'Product deleted successfully',
-      data: {
-        id,
-      },
+      data: product,
     };
   }
 }
