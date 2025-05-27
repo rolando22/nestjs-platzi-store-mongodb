@@ -8,52 +8,58 @@ import {
   Put,
 } from '@nestjs/common';
 
+import { CustomersService } from 'src/services/customers/customers.service';
+import { CreateCustomerDto, UpdateCustomerDto } from 'src/dtos/customer.dtos';
+
 @Controller('customers')
 export class CustomersController {
+  constructor(private customersService: CustomersService) {}
+
   @Get()
   getAll() {
+    const customers = this.customersService.findAll();
+
     return {
-      data: [],
+      data: customers,
     };
   }
 
   @Get(':id')
   getOne(@Param('id') id: string) {
+    const customer = this.customersService.findOne(id);
+
     return {
-      data: {
-        id,
-      },
+      data: customer,
     };
   }
 
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateCustomerDto) {
+    const newCustomer = this.customersService.create(body);
+
     return {
       message: 'Customer created successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: body,
+      data: newCustomer,
     };
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
+  update(@Param('id') id: string, @Body() body: UpdateCustomerDto) {
+    const customer = this.customersService.update(id, body);
+
     return {
       message: 'Customer updated successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: {
-        id,
-        ...body,
-      },
+      data: customer,
     };
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
+    const customer = this.customersService.delete(id);
+
     return {
       message: 'Customer deleted successfully',
-      data: {
-        id,
-      },
+      data: customer,
     };
   }
 }
