@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { ProductsService } from 'src/services/products/products.service';
+import { CreateProductDto, UpdateProductDto } from 'src/dtos/product.dtos';
 
 @Controller('products')
 export class ProductsController {
@@ -33,7 +34,7 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateProductDto) {
     const newProduct = this.productsService.create(body);
 
     return {
@@ -43,7 +44,7 @@ export class ProductsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
+  update(@Param('id') id: string, @Body() body: UpdateProductDto) {
     const product = this.productsService.update(id, body);
 
     return {
