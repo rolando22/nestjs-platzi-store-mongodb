@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { CategoriesService } from 'src/services/categories/categories.service';
+import { CreateCategoryDto, UpdateCategoryDto } from 'src/dtos/category.dtos';
 
 @Controller('categories')
 export class CategoriesController {
@@ -33,7 +34,7 @@ export class CategoriesController {
   }
 
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateCategoryDto) {
     const newCategory = this.categoriesService.create(body);
 
     return {
@@ -43,7 +44,7 @@ export class CategoriesController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
+  update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
     const category = this.categoriesService.update(id, body);
 
     return {

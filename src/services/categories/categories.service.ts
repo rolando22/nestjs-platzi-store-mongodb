@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { Category } from 'src/entities/category.entity';
+import { CreateCategoryDto, UpdateCategoryDto } from 'src/dtos/category.dtos';
 
 @Injectable()
 export class CategoriesService {
@@ -31,10 +33,9 @@ export class CategoriesService {
     return category;
   }
 
-  create(data: any) {
+  create(data: CreateCategoryDto) {
     this.counterId++;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newCategory: Category = {
       id: this.counterId.toString(),
       ...data,
@@ -44,12 +45,11 @@ export class CategoriesService {
     return newCategory;
   }
 
-  update(id: string, changes: any) {
+  update(id: string, changes: UpdateCategoryDto) {
     const index = this.categories.findIndex((category) => category.id === id);
 
     if (index === -1) throw new NotFoundException(`Category #${id} not found`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.categories[index] = {
       ...this.categories[index],
       ...changes,
