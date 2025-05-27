@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Brand } from 'src/entities/brand.entity';
+import { CreateBrandDto, UpdateBrandDto } from 'src/dtos/brand.dtos';
 
 @Injectable()
 export class BrandsService {
@@ -32,10 +33,9 @@ export class BrandsService {
     return brand;
   }
 
-  create(data: any) {
+  create(data: CreateBrandDto) {
     this.counterId++;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newBrand: Brand = {
       id: this.counterId.toString(),
       ...data,
@@ -45,12 +45,11 @@ export class BrandsService {
     return newBrand;
   }
 
-  update(id: string, changes: any) {
+  update(id: string, changes: UpdateBrandDto) {
     const index = this.brands.findIndex((brand) => brand.id === id);
 
     if (index === -1) throw new NotFoundException(`Brand #${id} not found`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.brands[index] = {
       ...this.brands[index],
       ...changes,

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { BrandsService } from 'src/services/brands/brands.service';
+import { CreateBrandDto, UpdateBrandDto } from 'src/dtos/brand.dtos';
 
 @Controller('brands')
 export class BrandsController {
@@ -33,7 +34,7 @@ export class BrandsController {
   }
 
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateBrandDto) {
     const newBrand = this.brandsService.create(body);
 
     return {
@@ -43,7 +44,7 @@ export class BrandsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any) {
+  update(@Param('id') id: string, @Body() body: UpdateBrandDto) {
     const brand = this.brandsService.update(id, body);
 
     return {
