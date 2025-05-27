@@ -4,15 +4,15 @@ import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 export class CreateCustomerDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @IsPhoneNumber()
-  @IsNotEmpty()
-  phone: string;
+  readonly name: string;
 
   @IsString()
   @IsNotEmpty()
-  address: string;
+  readonly lastName: string;
+
+  @IsPhoneNumber()
+  @IsNotEmpty()
+  readonly phone: string;
 }
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {}
