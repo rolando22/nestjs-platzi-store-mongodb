@@ -8,52 +8,57 @@ import {
   Put,
 } from '@nestjs/common';
 
+import { CategoriesService } from 'src/services/categories/categories.service';
+
 @Controller('categories')
 export class CategoriesController {
+  constructor(private categoriesService: CategoriesService) {}
+
   @Get()
   getAll() {
+    const categories = this.categoriesService.findAll();
+
     return {
-      data: [],
+      data: categories,
     };
   }
 
   @Get(':id')
   getOne(@Param('id') id: string) {
+    const category = this.categoriesService.findOne(id);
+
     return {
-      data: {
-        id,
-      },
+      data: category,
     };
   }
 
   @Post()
   create(@Body() body: any) {
+    const newCategory = this.categoriesService.create(body);
+
     return {
       message: 'Category created successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: body,
+      data: newCategory,
     };
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() body: any) {
+    const category = this.categoriesService.update(id, body);
+
     return {
       message: 'Category updated successfully',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      data: {
-        id,
-        ...body,
-      },
+      data: category,
     };
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
+    const category = this.categoriesService.delete(id);
+
     return {
       message: 'Category deleted successfully',
-      data: {
-        id,
-      },
+      data: category,
     };
   }
 }
