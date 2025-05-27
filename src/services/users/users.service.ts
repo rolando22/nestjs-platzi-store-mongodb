@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { User } from 'src/entities/user.entity';
+import { CreateUserDto, UpdateUserDto } from 'src/dtos/user.dtos';
 
 @Injectable()
 export class UsersService {
@@ -32,10 +33,9 @@ export class UsersService {
     return user;
   }
 
-  create(data: any) {
+  create(data: CreateUserDto) {
     this.counterId++;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newUser: User = {
       id: this.counterId.toString(),
       ...data,
@@ -45,12 +45,11 @@ export class UsersService {
     return newUser;
   }
 
-  update(id: string, changes: any) {
+  update(id: string, changes: UpdateUserDto) {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) throw new NotFoundException(`User #${id} not found`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.users[index] = {
       ...this.users[index],
       ...changes,
