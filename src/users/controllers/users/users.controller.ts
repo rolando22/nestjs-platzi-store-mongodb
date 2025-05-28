@@ -33,6 +33,14 @@ export class UsersController {
     };
   }
 
+  @Get(':id/orders')
+  getOrders(@Param('id') id: string) {
+    const orders = this.usersService.getOrdersByUser(id);
+    return {
+      data: orders,
+    };
+  }
+
   @Post()
   create(@Body() body: CreateUserDto) {
     const newUser = this.usersService.create(body);
