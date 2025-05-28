@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Category } from 'src/entities/category.entity';
-import { CreateCategoryDto, UpdateCategoryDto } from 'src/dtos/category.dtos';
+import { Category } from 'src/products/entities/category.entity';
+import {
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from 'src/products/dtos/category.dtos';
 
 @Injectable()
 export class CategoriesService {
@@ -10,14 +13,10 @@ export class CategoriesService {
     {
       id: '1',
       name: 'Electronics',
-      description: 'Devices and gadgets',
-      image: 'https://example.com/electronics.jpg',
     },
     {
       id: '2',
       name: 'Clothing',
-      description: 'Apparel and accessories',
-      image: 'https://example.com/clothing.jpg',
     },
   ];
 

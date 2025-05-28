@@ -10,33 +10,25 @@ import {
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  readonly name: string;
 
   @IsString()
   @IsNotEmpty()
-  description: string;
+  readonly description: string;
 
   @IsNumber()
   @IsNotEmpty()
   @IsPositive()
-  price: number;
+  readonly price: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @IsPositive()
+  readonly stock: number;
 
   @IsUrl()
   @IsNotEmpty()
-  image: string;
-
-  @IsString()
-  @IsNotEmpty()
-  categoryId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  brandId: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @IsPositive()
-  stock: number;
+  readonly image: string;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

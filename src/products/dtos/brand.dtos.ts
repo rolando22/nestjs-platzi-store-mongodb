@@ -4,15 +4,11 @@ import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
 export class CreateBrandDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  readonly name: string;
 
   @IsUrl()
   @IsNotEmpty()
-  image: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
+  readonly image: string;
 }
 
 export class UpdateBrandDto extends PartialType(CreateBrandDto) {}
