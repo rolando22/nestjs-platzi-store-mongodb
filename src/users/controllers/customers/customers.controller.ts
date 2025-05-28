@@ -7,18 +7,20 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { CustomersService } from 'src/users/services/customers/customers.service';
 import {
   CreateCustomerDto,
   UpdateCustomerDto,
-} from 'src/users/dtos/customer.dtos';
+} from 'src/users/dtos/customer.dto';
 
 @Controller('customers')
 export class CustomersController {
   constructor(private customersService: CustomersService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all customers' })
   getAll() {
     const customers = this.customersService.findAll();
 
@@ -28,6 +30,7 @@ export class CustomersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a customer by ID' })
   getOne(@Param('id') id: string) {
     const customer = this.customersService.findOne(id);
 
@@ -37,6 +40,7 @@ export class CustomersController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new customer' })
   create(@Body() body: CreateCustomerDto) {
     const newCustomer = this.customersService.create(body);
 
@@ -47,6 +51,7 @@ export class CustomersController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update an existing customer' })
   update(@Param('id') id: string, @Body() body: UpdateCustomerDto) {
     const customer = this.customersService.update(id, body);
 
@@ -57,6 +62,7 @@ export class CustomersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a customer by ID' })
   delete(@Param('id') id: string) {
     const customer = this.customersService.delete(id);
 

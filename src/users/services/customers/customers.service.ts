@@ -4,7 +4,7 @@ import { Customer } from 'src/users/entities/customer.entity';
 import {
   CreateCustomerDto,
   UpdateCustomerDto,
-} from 'src/users/dtos/customer.dtos';
+} from 'src/users/dtos/customer.dto';
 
 @Injectable()
 export class CustomersService {

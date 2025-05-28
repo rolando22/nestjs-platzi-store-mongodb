@@ -7,15 +7,17 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { UsersService } from 'src/users/services/users/users.service';
-import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dtos';
+import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all users' })
   getAll() {
     const users = this.usersService.findAll();
 
@@ -25,6 +27,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a user by ID' })
   getOne(@Param('id') id: string) {
     const user = this.usersService.findOne(id);
 
@@ -34,6 +37,7 @@ export class UsersController {
   }
 
   @Get(':id/orders')
+  @ApiOperation({ summary: 'Get orders by user' })
   getOrders(@Param('id') id: string) {
     const orders = this.usersService.getOrdersByUser(id);
     return {
@@ -42,6 +46,7 @@ export class UsersController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new user' })
   create(@Body() body: CreateUserDto) {
     const newUser = this.usersService.create(body);
 
@@ -52,6 +57,7 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update an existing user' })
   update(@Param('id') id: string, @Body() body: UpdateUserDto) {
     const user = this.usersService.update(id, body);
 
@@ -62,6 +68,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user by ID' })
   delete(@Param('id') id: string) {
     const user = this.usersService.delete(id);
 

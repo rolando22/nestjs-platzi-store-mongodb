@@ -7,15 +7,17 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { BrandsService } from 'src/products/services/brands/brands.service';
-import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dtos';
+import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
 
 @Controller('brands')
 export class BrandsController {
   constructor(private brandsService: BrandsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all brands' })
   getAll() {
     const brands = this.brandsService.findAll();
 
@@ -25,6 +27,7 @@ export class BrandsController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a brand by ID' })
   getOne(@Param('id') id: string) {
     const brand = this.brandsService.findOne(id);
 
@@ -34,6 +37,7 @@ export class BrandsController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new brand' })
   create(@Body() body: CreateBrandDto) {
     const newBrand = this.brandsService.create(body);
 
@@ -44,6 +48,7 @@ export class BrandsController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update an existing brand' })
   update(@Param('id') id: string, @Body() body: UpdateBrandDto) {
     const brand = this.brandsService.update(id, body);
 
@@ -54,6 +59,7 @@ export class BrandsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a brand by ID' })
   delete(@Param('id') id: string) {
     const brand = this.brandsService.delete(id);
 
