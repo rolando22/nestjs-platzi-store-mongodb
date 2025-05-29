@@ -14,7 +14,7 @@ import { appConfigSchema } from './config/config.scheman';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: environments[process.env.NODE_ENV || 'dev'],
+      envFilePath: environments[process.env.NODE_ENV || 'local'],
       load: [appConfig],
       isGlobal: true,
       validationSchema: appConfigSchema,
