@@ -3,12 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
+import { DatabaseModule } from './database/database.module';
 import { AppController } from './app.controller';
 import { OrdersController } from './controllers/orders/orders.controller';
 import { AppService } from './app.service';
 
 import { environments } from './enviroments';
-import appConfig from './config';
+import appConfig from './config/index';
 import { appConfigSchema } from './config/config.scheman';
 
 @Module({
@@ -21,6 +22,7 @@ import { appConfigSchema } from './config/config.scheman';
     }),
     UsersModule,
     ProductsModule,
+    DatabaseModule,
   ],
   controllers: [AppController, OrdersController],
   providers: [AppService],
