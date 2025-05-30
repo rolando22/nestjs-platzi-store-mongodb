@@ -1,10 +1,17 @@
 import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { databaseConnection } from './connection';
+import { databaseConnection, typeOrmDatabaseConnection } from './connection';
 import appConfig from '../config';
 
 @Global()
 @Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: typeOrmDatabaseConnection,
+      inject: [appConfig.KEY],
+    }),
+  ],
   providers: [
     {
       provide: 'PG_CLIENT',
@@ -12,6 +19,6 @@ import appConfig from '../config';
       inject: [appConfig.KEY],
     },
   ],
-  exports: ['PG_CLIENT'],
+  exports: ['PG_CLIENT', TypeOrmModule],
 })
 export class DatabaseModule {}

@@ -1,6 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { webcrypto } from 'crypto';
+
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto as any;
+}
 
 import { AppModule } from './app.module';
 
@@ -25,4 +30,5 @@ async function bootstrap() {
     console.log(`Server is running on port ${process.env.PORT}`);
   });
 }
+
 bootstrap();
