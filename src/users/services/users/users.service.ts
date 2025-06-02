@@ -73,9 +73,9 @@ export class UsersService {
     return deletedUser;
   }
 
-  getOrdersByUser(userId: string): Order {
+  async getOrdersByUser(userId: string): Promise<Order> {
     const user = this.findOne(userId);
-    const products = this.productsService.findAll();
+    const products = await this.productsService.findAll();
 
     return {
       date: new Date(),

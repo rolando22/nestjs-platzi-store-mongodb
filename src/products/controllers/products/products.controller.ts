@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -21,8 +22,8 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  getAll() {
-    const products = this.productsService.findAll();
+  async getAll() {
+    const products = await this.productsService.findAll();
 
     return {
       data: products,
@@ -31,8 +32,8 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })
-  getOne(@Param('id') id: string) {
-    const product = this.productsService.findOne(id);
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    const product = await this.productsService.findOne(id);
 
     return {
       data: product,
@@ -41,8 +42,8 @@ export class ProductsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
-  create(@Body() body: CreateProductDto) {
-    const newProduct = this.productsService.create(body);
+  async create(@Body() body: CreateProductDto) {
+    const newProduct = await this.productsService.create(body);
 
     return {
       message: 'Product created successfully',
@@ -52,8 +53,11 @@ export class ProductsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing product' })
-  update(@Param('id') id: string, @Body() body: UpdateProductDto) {
-    const product = this.productsService.update(id, body);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateProductDto,
+  ) {
+    const product = await this.productsService.update(id, body);
 
     return {
       message: 'Product updated successfully',
@@ -63,8 +67,8 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by ID' })
-  delete(@Param('id') id: string) {
-    const product = this.productsService.delete(id);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    const product = await this.productsService.delete(id);
 
     return {
       message: 'Product deleted successfully',

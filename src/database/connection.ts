@@ -41,5 +41,7 @@ export const typeOrmDatabaseConnection = (
     username: user,
     password,
     database: dbName,
+    synchronize: true,
+    autoLoadEntities: true,
   };
 };
