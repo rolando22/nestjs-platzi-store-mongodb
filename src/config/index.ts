@@ -11,5 +11,12 @@ export default registerAs('config', () => ({
       password: process.env.POSTGRES_PASSWORD || '',
       port: Number(process.env.POSTGRES_PORT) || 5432,
     },
+    mysql: {
+      user: process.env.MYSQL_USER || '',
+      host: process.env.MYSQL_HOST || '',
+      dbName: process.env.MYSQL_DATABASE || '',
+      password: process.env.MYSQL_ROOT_PASSWORD || '',
+      port: Number(process.env.MYSQL_PORT) || 3306,
+    },
   },
 }));
