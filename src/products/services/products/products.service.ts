@@ -10,26 +10,6 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  private counterId = 2;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Product 1',
-      description: 'Description of Product 1',
-      price: 100,
-      stock: 10,
-      image: 'https://example.com/product1.jpg',
-    },
-    {
-      id: 2,
-      name: 'Product 2',
-      description: 'Description of Product 2',
-      price: 200,
-      stock: 20,
-      image: 'https://example.com/product2.jpg',
-    },
-  ];
-
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
   ) {}
