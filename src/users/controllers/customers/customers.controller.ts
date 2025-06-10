@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -21,8 +22,8 @@ export class CustomersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all customers' })
-  getAll() {
-    const customers = this.customersService.findAll();
+  async getAll() {
+    const customers = await this.customersService.findAll();
 
     return {
       data: customers,
@@ -31,8 +32,8 @@ export class CustomersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a customer by ID' })
-  getOne(@Param('id') id: string) {
-    const customer = this.customersService.findOne(id);
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    const customer = await this.customersService.findOne(id);
 
     return {
       data: customer,
@@ -41,8 +42,8 @@ export class CustomersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new customer' })
-  create(@Body() body: CreateCustomerDto) {
-    const newCustomer = this.customersService.create(body);
+  async create(@Body() body: CreateCustomerDto) {
+    const newCustomer = await this.customersService.create(body);
 
     return {
       message: 'Customer created successfully',
@@ -52,8 +53,11 @@ export class CustomersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing customer' })
-  update(@Param('id') id: string, @Body() body: UpdateCustomerDto) {
-    const customer = this.customersService.update(id, body);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateCustomerDto,
+  ) {
+    const customer = await this.customersService.update(id, body);
 
     return {
       message: 'Customer updated successfully',
@@ -63,8 +67,8 @@ export class CustomersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a customer by ID' })
-  delete(@Param('id') id: string) {
-    const customer = this.customersService.delete(id);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    const customer = await this.customersService.delete(id);
 
     return {
       message: 'Customer deleted successfully',

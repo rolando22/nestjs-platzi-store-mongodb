@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -18,8 +19,8 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  getAll() {
-    const users = this.usersService.findAll();
+  async getAll() {
+    const users = await this.usersService.findAll();
 
     return {
       data: users,
@@ -28,8 +29,8 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by ID' })
-  getOne(@Param('id') id: string) {
-    const user = this.usersService.findOne(id);
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.usersService.findOne(id);
 
     return {
       data: user,
@@ -38,8 +39,8 @@ export class UsersController {
 
   @Get(':id/orders')
   @ApiOperation({ summary: 'Get orders by user' })
-  getOrders(@Param('id') id: string) {
-    const orders = this.usersService.getOrdersByUser(id);
+  async getOrders(@Param('id', ParseIntPipe) id: number) {
+    const orders = await this.usersService.getOrdersByUser(id);
     return {
       data: orders,
     };
@@ -47,8 +48,8 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  create(@Body() body: CreateUserDto) {
-    const newUser = this.usersService.create(body);
+  async create(@Body() body: CreateUserDto) {
+    const newUser = await this.usersService.create(body);
 
     return {
       message: 'User created successfully',
@@ -58,8 +59,11 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing user' })
-  update(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    const user = this.usersService.update(id, body);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUserDto,
+  ) {
+    const user = await this.usersService.update(id, body);
 
     return {
       message: 'User updated successfully',
@@ -69,8 +73,8 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user by ID' })
-  delete(@Param('id') id: string) {
-    const user = this.usersService.delete(id);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.usersService.delete(id);
 
     return {
       message: 'User deleted successfully',

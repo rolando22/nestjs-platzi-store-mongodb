@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { Customer } from 'src/users/entities/customer.entity';
 import {
@@ -8,67 +10,42 @@ import {
 
 @Injectable()
 export class CustomersService {
-  private counterId = 2;
-  private customers: Customer[] = [
-    {
-      id: '1',
-      name: 'Customer 1',
-      lastName: 'Last Name 1',
-      phone: '1234567890',
-    },
-    {
-      id: '2',
-      name: 'Customer 2',
-      lastName: 'Last Name 2',
-      phone: '0987654321',
-    },
-  ];
+  constructor(
+    @InjectRepository(Customer)
+    private customersRepository: Repository<Customer>,
+  ) {}
 
-  findAll() {
-    return this.customers;
+  async findAll(): Promise<Customer[]> {
+    const customers = await this.customersRepository.find();
+    return customers;
   }
 
-  findOne(id: string) {
-    const customer = this.customers.find((customer) => customer.id === id);
+  async findOne(id: number): Promise<Customer> {
+    const customer = await this.customersRepository.findOne({
+      where: { id },
+    });
 
     if (!customer) throw new NotFoundException(`Customer #${id} not found`);
 
     return customer;
   }
 
-  create(data: CreateCustomerDto) {
-    this.counterId++;
-
-    const newCustomer: Customer = {
-      id: this.counterId.toString(),
-      ...data,
-    };
-    this.customers.push(newCustomer);
-
-    return newCustomer;
+  async create(data: CreateCustomerDto): Promise<Customer> {
+    const newCustomer = this.customersRepository.create(data);
+    const savedCustomer = await this.customersRepository.save(newCustomer);
+    return savedCustomer;
   }
 
-  update(id: string, changes: UpdateCustomerDto) {
-    const index = this.customers.findIndex((customer) => customer.id === id);
-
-    if (index === -1) throw new NotFoundException(`Customer #${id} not found`);
-
-    this.customers[index] = {
-      ...this.customers[index],
-      ...changes,
-    };
-
-    return this.customers[index];
+  async update(id: number, changes: UpdateCustomerDto): Promise<Customer> {
+    const customer = await this.findOne(id);
+    this.customersRepository.merge(customer, changes);
+    const updatedCustomer = this.customersRepository.save(customer);
+    return updatedCustomer;
   }
 
-  delete(id: string) {
-    const index = this.customers.findIndex((customer) => customer.id === id);
-
-    if (index === -1) throw new NotFoundException(`Customer #${id} not found`);
-
-    const deletedCustomer = this.customers[index];
-    this.customers.splice(index, 1);
-
-    return deletedCustomer;
+  async delete(id: number): Promise<Customer> {
+    const customer = await this.findOne(id);
+    await this.customersRepository.delete(customer.id);
+    return customer;
   }
 }
