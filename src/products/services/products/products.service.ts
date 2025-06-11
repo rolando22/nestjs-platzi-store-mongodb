@@ -15,12 +15,17 @@ export class ProductsService {
   ) {}
 
   async findAll() {
-    const products = await this.productsRepository.find();
+    const products = await this.productsRepository.find({
+      relations: { brand: true },
+    });
     return products;
   }
 
   async findOne(id: number) {
-    const product = await this.productsRepository.findOneBy({ id });
+    const product = await this.productsRepository.findOne({
+      where: { id },
+      relations: { brand: true },
+    });
 
     if (!product) throw new NotFoundException(`Product #${id} not found`);
 
