@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { BrandsService } from '../brands/brands.service';
 import { Product } from 'src/products/entities/product.entity';
 import {
   CreateProductDto,
@@ -12,6 +13,7 @@ import {
 export class ProductsService {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
+    private brandsService: BrandsService,
   ) {}
 
   async findAll() {
@@ -34,12 +36,24 @@ export class ProductsService {
 
   async create(data: CreateProductDto) {
     const newProduct = this.productsRepository.create(data);
+
+    if (data.brandId) {
+      const brand = await this.brandsService.findOne(data.brandId);
+      newProduct.brand = brand;
+    }
+
     const savedProduct = await this.productsRepository.save(newProduct);
     return savedProduct;
   }
 
   async update(id: number, changes: UpdateProductDto) {
     const product = await this.findOne(id);
+
+    if (changes.brandId) {
+      const brand = await this.brandsService.findOne(changes.brandId);
+      product.brand = brand;
+    }
+
     this.productsRepository.merge(product, changes);
     const updatedProduct = await this.productsRepository.save(product);
     return updatedProduct;

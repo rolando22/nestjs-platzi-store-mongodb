@@ -19,6 +19,7 @@ export class BrandsService {
   async findOne(id: number): Promise<Brand> {
     const brand = await this.brandsRepository.findOne({
       where: { id },
+      relations: { products: true },
     });
 
     if (!brand) throw new NotFoundException(`Brand #${id} not found`);
