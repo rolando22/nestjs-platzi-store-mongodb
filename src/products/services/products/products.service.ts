@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { BrandsService } from '../brands/brands.service';
+import { Brand } from 'src/products/entities/brand.entity';
+import { Category } from 'src/products/entities/category.entity';
 import { Product } from 'src/products/entities/product.entity';
 import {
   CreateProductDto,
@@ -13,12 +14,14 @@ import {
 export class ProductsService {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    private brandsService: BrandsService,
+    @InjectRepository(Brand) private brandsRepository: Repository<Brand>,
+    @InjectRepository(Category)
+    private categoriesRepository: Repository<Category>,
   ) {}
 
   async findAll() {
     const products = await this.productsRepository.find({
-      relations: { brand: true },
+      relations: { brand: true, categories: true },
     });
     return products;
   }
@@ -26,7 +29,7 @@ export class ProductsService {
   async findOne(id: number) {
     const product = await this.productsRepository.findOne({
       where: { id },
-      relations: { brand: true },
+      relations: { brand: true, categories: true },
     });
 
     if (!product) throw new NotFoundException(`Product #${id} not found`);
@@ -38,8 +41,18 @@ export class ProductsService {
     const newProduct = this.productsRepository.create(data);
 
     if (data.brandId) {
-      const brand = await this.brandsService.findOne(data.brandId);
+      const brand = await this.brandsRepository.findOne({
+        where: { id: data.brandId },
+      });
+      if (!brand)
+        throw new NotFoundException(`Brand #${data.brandId} not found`);
       newProduct.brand = brand;
+    }
+    if (data.categoriesIds) {
+      const categories = await this.categoriesRepository.findBy({
+        id: In(data.categoriesIds),
+      });
+      newProduct.categories = categories;
     }
 
     const savedProduct = await this.productsRepository.save(newProduct);
@@ -50,8 +63,18 @@ export class ProductsService {
     const product = await this.findOne(id);
 
     if (changes.brandId) {
-      const brand = await this.brandsService.findOne(changes.brandId);
+      const brand = await this.brandsRepository.findOne({
+        where: { id: changes.brandId },
+      });
+      if (!brand)
+        throw new NotFoundException(`Brand #${changes.brandId} not found`);
       product.brand = brand;
+    }
+    if (changes.categoriesIds) {
+      const categories = await this.categoriesRepository.findBy({
+        id: In(changes.categoriesIds),
+      });
+      product.categories = categories;
     }
 
     this.productsRepository.merge(product, changes);
@@ -63,5 +86,43 @@ export class ProductsService {
     const product = await this.findOne(id);
     await this.productsRepository.delete(product.id);
     return product;
+  }
+
+  async addCategoryToProduct(
+    productId: number,
+    categoryId: number,
+  ): Promise<Product> {
+    const product = await this.findOne(productId);
+    const category = await this.categoriesRepository.findOne({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category #${categoryId} not found`);
+    }
+
+    product.categories.push(category);
+    const savedProduct = await this.productsRepository.save(product);
+    return savedProduct;
+  }
+
+  async deleteCategoryFromProduct(
+    productId: number,
+    categoryId: number,
+  ): Promise<Product> {
+    const product = await this.findOne(productId);
+    const category = await this.categoriesRepository.findOne({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category #${categoryId} not found`);
+    }
+
+    product.categories = product.categories.filter(
+      (cat) => cat.id !== category.id,
+    );
+    const savedProduct = await this.productsRepository.save(product);
+    return savedProduct;
   }
 }

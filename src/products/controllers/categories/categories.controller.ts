@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -21,8 +22,8 @@ export class CategoriesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all categories' })
-  getAll() {
-    const categories = this.categoriesService.findAll();
+  async getAll() {
+    const categories = await this.categoriesService.findAll();
 
     return {
       data: categories,
@@ -31,8 +32,8 @@ export class CategoriesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a category by ID' })
-  getOne(@Param('id') id: string) {
-    const category = this.categoriesService.findOne(id);
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    const category = await this.categoriesService.findOne(id);
 
     return {
       data: category,
@@ -41,8 +42,8 @@ export class CategoriesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new category' })
-  create(@Body() body: CreateCategoryDto) {
-    const newCategory = this.categoriesService.create(body);
+  async create(@Body() body: CreateCategoryDto) {
+    const newCategory = await this.categoriesService.create(body);
 
     return {
       message: 'Category created successfully',
@@ -52,8 +53,11 @@ export class CategoriesController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing category' })
-  update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
-    const category = this.categoriesService.update(id, body);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateCategoryDto,
+  ) {
+    const category = await this.categoriesService.update(id, body);
 
     return {
       message: 'Category updated successfully',
@@ -63,8 +67,8 @@ export class CategoriesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a category by ID' })
-  delete(@Param('id') id: string) {
-    const category = this.categoriesService.delete(id);
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    const category = await this.categoriesService.delete(id);
 
     return {
       message: 'Category deleted successfully',

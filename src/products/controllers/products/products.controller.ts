@@ -52,7 +52,7 @@ export class ProductsController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update an existing product' })
+  @ApiOperation({ summary: 'Update a existing product' })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateProductDto,
@@ -65,6 +65,23 @@ export class ProductsController {
     };
   }
 
+  @Put(':id/category/:categoryId')
+  @ApiOperation({ summary: 'Add category to a existing product' })
+  async addCategoryToProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    const product = await this.productsService.addCategoryToProduct(
+      id,
+      categoryId,
+    );
+
+    return {
+      message: 'Category added to Product successfully',
+      data: product,
+    };
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by ID' })
   async delete(@Param('id', ParseIntPipe) id: number) {
@@ -72,6 +89,23 @@ export class ProductsController {
 
     return {
       message: 'Product deleted successfully',
+      data: product,
+    };
+  }
+
+  @Delete(':id/category/:categoryId')
+  @ApiOperation({ summary: 'Delete a category from product by ID' })
+  async deleteCategoryFromProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    const product = await this.productsService.deleteCategoryFromProduct(
+      id,
+      categoryId,
+    );
+
+    return {
+      message: 'Category deleted from product successfully',
       data: product,
     };
   }
