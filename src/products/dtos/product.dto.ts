@@ -3,9 +3,11 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   IsUrl,
+  ValidateIf,
 } from 'class-validator';
 
 import { PaginationDto } from 'src/common/dto/pagination.dto';
@@ -45,4 +47,12 @@ export class CreateProductDto {
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
-export class ProductQueryDto extends PaginationDto {}
+export class ProductQueryDto extends PaginationDto {
+  @ValidateIf((obj: ProductQueryDto) => obj.maxPrice !== undefined)
+  @IsPositive()
+  minPrice: number;
+
+  @IsOptional()
+  @IsPositive()
+  maxPrice: number;
+}
