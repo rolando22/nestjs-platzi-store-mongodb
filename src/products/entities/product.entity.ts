@@ -13,7 +13,7 @@ import {
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
 
-@Entity()
+@Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
@@ -52,6 +52,10 @@ export class Product {
   brand: Brand;
 
   @ManyToMany(() => Category, (category) => category.products)
-  @JoinTable({ name: 'product_category' })
+  @JoinTable({
+    name: 'products_categories',
+    joinColumn: { name: 'product_id' },
+    inverseJoinColumn: { name: 'category_id' },
+  })
   categories: Category[];
 }
