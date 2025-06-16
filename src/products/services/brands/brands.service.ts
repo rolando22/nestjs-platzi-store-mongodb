@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Brand } from 'src/products/entities/brand.entity';
-import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
+import {
+  BrandQueryDto,
+  CreateBrandDto,
+  UpdateBrandDto,
+} from 'src/products/dtos/brand.dto';
 
 @Injectable()
 export class BrandsService {
@@ -11,8 +15,14 @@ export class BrandsService {
     @InjectRepository(Brand) private brandsRepository: Repository<Brand>,
   ) {}
 
-  async findAll(): Promise<Brand[]> {
-    const brands = await this.brandsRepository.find();
+  async findAll(filters?: BrandQueryDto): Promise<Brand[]> {
+    const { limit, offset } = filters!;
+
+    const brands = await this.brandsRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
     return brands;
   }
 

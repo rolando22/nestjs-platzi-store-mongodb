@@ -7,11 +7,16 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { BrandsService } from 'src/products/services/brands/brands.service';
-import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
+import {
+  BrandQueryDto,
+  CreateBrandDto,
+  UpdateBrandDto,
+} from 'src/products/dtos/brand.dto';
 
 @Controller('brands')
 export class BrandsController {
@@ -19,8 +24,8 @@ export class BrandsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all brands' })
-  async getAll() {
-    const brands = await this.brandsService.findAll();
+  async getAll(@Query() query: BrandQueryDto) {
+    const brands = await this.brandsService.findAll(query);
 
     return {
       data: brands,

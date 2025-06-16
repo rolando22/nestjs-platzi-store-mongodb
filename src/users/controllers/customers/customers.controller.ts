@@ -7,12 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { CustomersService } from 'src/users/services/customers/customers.service';
 import {
   CreateCustomerDto,
+  CustomerQueryDto,
   UpdateCustomerDto,
 } from 'src/users/dtos/customer.dto';
 
@@ -22,8 +24,8 @@ export class CustomersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all customers' })
-  async getAll() {
-    const customers = await this.customersService.findAll();
+  async getAll(@Query() query: CustomerQueryDto) {
+    const customers = await this.customersService.findAll(query);
 
     return {
       data: customers,

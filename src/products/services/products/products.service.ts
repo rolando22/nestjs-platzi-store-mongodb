@@ -7,6 +7,7 @@ import { Category } from 'src/products/entities/category.entity';
 import { Product } from 'src/products/entities/product.entity';
 import {
   CreateProductDto,
+  ProductQueryDto,
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
 
@@ -19,10 +20,15 @@ export class ProductsService {
     private categoriesRepository: Repository<Category>,
   ) {}
 
-  async findAll() {
+  async findAll(filters?: ProductQueryDto) {
+    const { limit, offset } = filters!;
+
     const products = await this.productsRepository.find({
       relations: { brand: true, categories: true },
+      take: limit,
+      skip: offset,
     });
+
     return products;
   }
 

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Category } from 'src/products/entities/category.entity';
 import {
+  CategoryQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
@@ -15,8 +16,14 @@ export class CategoriesService {
     private categoriesRepository: Repository<Category>,
   ) {}
 
-  async findAll(): Promise<Category[]> {
-    const categories = await this.categoriesRepository.find();
+  async findAll(filters?: CategoryQueryDto): Promise<Category[]> {
+    const { limit, offset } = filters!;
+
+    const categories = await this.categoriesRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
     return categories;
   }
 

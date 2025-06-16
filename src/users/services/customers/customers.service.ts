@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Customer } from 'src/users/entities/customer.entity';
 import {
   CreateCustomerDto,
+  CustomerQueryDto,
   UpdateCustomerDto,
 } from 'src/users/dtos/customer.dto';
 
@@ -15,8 +16,13 @@ export class CustomersService {
     private customersRepository: Repository<Customer>,
   ) {}
 
-  async findAll(): Promise<Customer[]> {
-    const customers = await this.customersRepository.find();
+  async findAll(filters?: CustomerQueryDto): Promise<Customer[]> {
+    const { limit, offset } = filters!;
+
+    const customers = await this.customersRepository.find({
+      take: limit,
+      skip: offset,
+    });
     return customers;
   }
 

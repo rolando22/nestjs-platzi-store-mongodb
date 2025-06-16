@@ -7,6 +7,7 @@ import { Order } from 'src/users/entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import {
   CreateOrderItemDto,
+  OrderItemQueryDto,
   UpdateOrderItemDto,
 } from 'src/users/dtos/order-item.dto';
 
@@ -19,9 +20,13 @@ export class OrderItemsService {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
   ) {}
 
-  async findAll(): Promise<OrderItem[]> {
+  async findAll(filters?: OrderItemQueryDto): Promise<OrderItem[]> {
+    const { limit, offset } = filters!;
+
     const orderItems = await this.orderItemsRepository.find({
       relations: { order: { customer: true }, product: true },
+      take: limit,
+      skip: offset,
     });
 
     return orderItems;

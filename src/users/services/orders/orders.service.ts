@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Order } from 'src/users/entities/order.entity';
-import { CreateOrderDto, UpdateOrderDto } from 'src/users/dtos/order.dto';
+import {
+  CreateOrderDto,
+  OrderQueryDto,
+  UpdateOrderDto,
+} from 'src/users/dtos/order.dto';
 import { Customer } from 'src/users/entities/customer.entity';
 
 @Injectable()
@@ -14,10 +18,15 @@ export class OrdersService {
     private customersRepository: Repository<Customer>,
   ) {}
 
-  async findAll(): Promise<Order[]> {
+  async findAll(filters?: OrderQueryDto): Promise<Order[]> {
+    const { limit, offset } = filters!;
+
     const orders = await this.ordersRepository.find({
       relations: { customer: true },
+      take: limit,
+      skip: offset,
     });
+
     return orders;
   }
 

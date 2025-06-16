@@ -7,11 +7,13 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { CategoriesService } from 'src/products/services/categories/categories.service';
 import {
+  CategoryQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
@@ -22,8 +24,8 @@ export class CategoriesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all categories' })
-  async getAll() {
-    const categories = await this.categoriesService.findAll();
+  async getAll(@Query() query: CategoryQueryDto) {
+    const categories = await this.categoriesService.findAll(query);
 
     return {
       data: categories,

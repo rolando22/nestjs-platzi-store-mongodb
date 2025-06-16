@@ -8,6 +8,8 @@ import {
   IsUrl,
 } from 'class-validator';
 
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
@@ -42,3 +44,5 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
+
+export class ProductQueryDto extends PaginationDto {}

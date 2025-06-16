@@ -1,6 +1,8 @@
 import { PartialType } from '@nestjs/swagger';
 import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+
 export class CreateCustomerDto {
   @IsString()
   @IsNotEmpty()
@@ -16,3 +18,5 @@ export class CreateCustomerDto {
 }
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {}
+
+export class CustomerQueryDto extends PaginationDto {}

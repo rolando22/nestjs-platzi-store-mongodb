@@ -6,7 +6,11 @@ import { ProductsService } from 'src/products/services/products/products.service
 import { CustomersService } from '../customers/customers.service';
 import { User } from 'src/users/entities/user.entity';
 // import { Order } from 'src/users/entities/order.entity';
-import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UserQueryDto,
+} from 'src/users/dtos/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,10 +20,15 @@ export class UsersService {
     private customersService: CustomersService,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(filters?: UserQueryDto): Promise<User[]> {
+    const { limit, offset } = filters!;
+
     const users = await this.usersRepository.find({
       relations: ['customer'],
+      take: limit,
+      skip: offset,
     });
+
     return users;
   }
 
