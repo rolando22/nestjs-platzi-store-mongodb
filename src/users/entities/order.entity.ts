@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 
 import { Customer } from './customer.entity';
 import { OrderItem } from './order-item.entity';
@@ -23,6 +24,7 @@ export class Order {
   })
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamptz',
@@ -36,4 +38,27 @@ export class Order {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   items: OrderItem[];
+
+  @Expose()
+  get quantity() {
+    if (!this.items) return 0;
+
+    const quantity = this.items.filter((item) => !!item).length;
+
+    return quantity;
+  }
+
+  @Expose()
+  get total() {
+    if (!this.items) return 0;
+
+    const total = this.items
+      .filter((item) => !!item)
+      .reduce(
+        (subtotal, item) => subtotal + item.product.price * item.quantity,
+        0,
+      );
+
+    return total;
+  }
 }
