@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ProductsService } from 'src/products/services/products/products.service';
 import { CustomersService } from '../customers/customers.service';
 import { User } from 'src/users/entities/user.entity';
-import { Order } from 'src/users/entities/order.entity';
+// import { Order } from 'src/users/entities/order.entity';
 import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
 
 @Injectable()
@@ -59,14 +59,14 @@ export class UsersService {
     return user;
   }
 
-  async getOrdersByUser(userId: number): Promise<Order> {
-    const user = await this.findOne(userId);
-    const products = await this.productsService.findAll();
+  // async getOrdersByUser(userId: number): Promise<Order> {
+  //   const user = await this.findOne(userId);
+  //   const products = await this.productsService.findAll();
 
-    return {
-      date: new Date(),
-      user: user,
-      products,
-    };
-  }
+  //   return {
+  //     date: new Date(),
+  //     user: user,
+  //     products,
+  //   };
+  // }
 }

@@ -5,7 +5,6 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 import { AppController } from './app.controller';
-import { OrdersController } from './controllers/orders/orders.controller';
 import { AppService } from './app.service';
 
 import { environments } from './enviroments';
@@ -24,7 +23,7 @@ import { appConfigSchema } from './config/config.scheman';
     ProductsModule,
     DatabaseModule,
   ],
-  controllers: [AppController, OrdersController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

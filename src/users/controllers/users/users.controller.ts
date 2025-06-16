@@ -37,14 +37,14 @@ export class UsersController {
     };
   }
 
-  @Get(':id/orders')
-  @ApiOperation({ summary: 'Get orders by user' })
-  async getOrders(@Param('id', ParseIntPipe) id: number) {
-    const orders = await this.usersService.getOrdersByUser(id);
-    return {
-      data: orders,
-    };
-  }
+  // @Get(':id/orders')
+  // @ApiOperation({ summary: 'Get orders by user' })
+  // async getOrders(@Param('id', ParseIntPipe) id: number) {
+  //   const orders = await this.usersService.getOrdersByUser(id);
+  //   return {
+  //     data: orders,
+  //   };
+  // }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
