@@ -10,8 +10,10 @@ export const appConfigSchema = Joi.object({
   POSTGRES_HOST: Joi.string().required(),
   POSTGRES_PASSWORD: Joi.string().required(),
   POSTGRES_PORT: Joi.number().required(),
-  // PGADMIN
-  PGADMIN_DEFAULT_EMAIL: Joi.string().email().required(),
-  PGADMIN_DEFAULT_PASSWORD: Joi.string().required(),
-  PGADMIN_DEFAULT_PORT: Joi.number().required(),
+  // TYPEORM
+  TYPEORM_HOST: Joi.string().required(),
+  TYPEORM_USERNAME: Joi.string().required(),
+  TYPEORM_PASSWORD: Joi.string().required(),
+  TYPEORM_DATABASE: Joi.string().required(),
+  TYPEORM_PORT: Joi.number().required(),
 });
