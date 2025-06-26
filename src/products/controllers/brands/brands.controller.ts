@@ -11,6 +11,7 @@ import { ApiOperation } from '@nestjs/swagger';
 
 import { BrandsService } from 'src/products/services/brands/brands.service';
 import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('brands')
 export class BrandsController {
@@ -28,7 +29,7 @@ export class BrandsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a brand by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const brand = await this.brandsService.findOne(id);
 
     return {
@@ -49,7 +50,10 @@ export class BrandsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing brand' })
-  async update(@Param('id') id: string, @Body() body: UpdateBrandDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateBrandDto,
+  ) {
     const brand = await this.brandsService.update(id, body);
 
     return {
@@ -60,7 +64,7 @@ export class BrandsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a brand by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const brand = await this.brandsService.delete(id);
 
     return {

@@ -14,6 +14,7 @@ import {
   CreateCustomerDto,
   UpdateCustomerDto,
 } from 'src/users/dtos/customer.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('customers')
 export class CustomersController {
@@ -31,7 +32,7 @@ export class CustomersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a customer by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const customer = await this.customersService.findOne(id);
 
     return {
@@ -52,7 +53,10 @@ export class CustomersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing customer' })
-  async update(@Param('id') id: string, @Body() body: UpdateCustomerDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateCustomerDto,
+  ) {
     const customer = await this.customersService.update(id, body);
 
     return {
@@ -63,7 +67,7 @@ export class CustomersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a customer by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const customer = await this.customersService.delete(id);
 
     return {

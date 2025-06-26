@@ -14,6 +14,7 @@ import {
   CreateOrderItemDto,
   UpdateOrderItemDto,
 } from 'src/users/dtos/order-item.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('order-items')
 export class OrderItemsController {
@@ -31,7 +32,7 @@ export class OrderItemsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a order item by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const orderItem = await this.orderItemsService.findOne(id);
 
     return {
@@ -52,7 +53,10 @@ export class OrderItemsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing order item' })
-  async update(@Param('id') id: string, @Body() body: UpdateOrderItemDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateOrderItemDto,
+  ) {
     const orderItem = await this.orderItemsService.update(id, body);
 
     return {
@@ -63,7 +67,7 @@ export class OrderItemsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a order item by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const orderItem = await this.orderItemsService.delete(id);
 
     return {

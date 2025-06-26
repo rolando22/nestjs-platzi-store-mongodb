@@ -14,6 +14,7 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('categories')
 export class CategoriesController {
@@ -31,7 +32,7 @@ export class CategoriesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a category by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const category = await this.categoriesService.findOne(id);
 
     return {
@@ -52,7 +53,10 @@ export class CategoriesController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing category' })
-  async update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateCategoryDto,
+  ) {
     const category = await this.categoriesService.update(id, body);
 
     return {
@@ -63,7 +67,7 @@ export class CategoriesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a category by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const category = await this.categoriesService.delete(id);
 
     return {

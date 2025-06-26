@@ -14,6 +14,7 @@ import {
   CreateProductDto,
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('products')
 export class ProductsController {
@@ -31,7 +32,7 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const product = await this.productsService.findOne(id);
 
     return {
@@ -52,7 +53,10 @@ export class ProductsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a existing product' })
-  async update(@Param('id') id: string, @Body() body: UpdateProductDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateProductDto,
+  ) {
     const product = await this.productsService.update(id, body);
 
     return {
@@ -80,7 +84,7 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const product = await this.productsService.delete(id);
 
     return {

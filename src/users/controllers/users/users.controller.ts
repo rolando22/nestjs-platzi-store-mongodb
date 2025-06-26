@@ -11,6 +11,7 @@ import { ApiOperation } from '@nestjs/swagger';
 
 import { UsersService } from 'src/users/services/users/users.service';
 import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
+import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -28,7 +29,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by ID' })
-  async getOne(@Param('id') id: string) {
+  async getOne(@Param('id', MongoIdPipe) id: string) {
     const user = await this.usersService.findOne(id);
 
     return {
@@ -58,7 +59,10 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing user' })
-  async update(@Param('id') id: string, @Body() body: UpdateUserDto) {
+  async update(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() body: UpdateUserDto,
+  ) {
     const user = await this.usersService.update(id, body);
 
     return {
@@ -69,7 +73,7 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user by ID' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id', MongoIdPipe) id: string) {
     const user = await this.usersService.delete(id);
 
     return {
