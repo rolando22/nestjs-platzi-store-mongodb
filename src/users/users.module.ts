@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ProductsModule } from 'src/products/products.module';
 
@@ -12,16 +11,22 @@ import { CustomersService } from './services/customers/customers.service';
 import { OrderItemsService } from './services/order-items/order-items.service';
 import { OrdersService } from './services/orders/orders.service';
 import { UsersService } from './services/users/users.service';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { Customer } from './entities/customer.entity';
-import { OrderItem } from './entities/order-item.entity';
-import { Order } from './entities/order.entity';
-import { User } from './entities/user.entity';
+import { Customer, CustomerSchema } from './entities/customer.entity';
+import { OrderItem, OrderItemSchema } from './entities/order-item.entity';
+import { Order, OrderSchema } from './entities/order.entity';
+import { User, UserSchema } from './entities/user.entity';
 
 @Module({
   imports: [
     ProductsModule,
-    TypeOrmModule.forFeature([Customer, OrderItem, Order, User]),
+    MongooseModule.forFeature([
+      { name: Customer.name, schema: CustomerSchema },
+      { name: OrderItem.name, schema: OrderItemSchema },
+      { name: Order.name, schema: OrderSchema },
+      { name: User.name, schema: UserSchema },
+    ]),
   ],
   controllers: [
     CustomersController,

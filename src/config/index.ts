@@ -11,12 +11,13 @@ export default registerAs('config', () => ({
       password: process.env.POSTGRES_PASSWORD || '',
       port: Number(process.env.POSTGRES_PORT) || 5432,
     },
-    mysql: {
-      user: process.env.MYSQL_USER || '',
-      host: process.env.MYSQL_HOST || '',
-      dbName: process.env.MYSQL_DATABASE || '',
-      password: process.env.MYSQL_ROOT_PASSWORD || '',
-      port: Number(process.env.MYSQL_PORT) || 3306,
+    mongo: {
+      user: process.env.MONGO_INITDB_ROOT_USERNAME || '',
+      host: process.env.MONGO_HOST || '',
+      dbName: process.env.MONGO_DB || '',
+      password: process.env.MONGO_INITDB_ROOT_PASSWORD || '',
+      port: Number(process.env.MONGO_PORT) || 27017,
+      connection: process.env.MONGO_CONNECTION,
     },
   },
 }));

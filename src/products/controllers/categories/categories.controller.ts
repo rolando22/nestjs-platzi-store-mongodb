@@ -4,16 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { CategoriesService } from 'src/products/services/categories/categories.service';
 import {
-  CategoryQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
@@ -24,8 +21,8 @@ export class CategoriesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all categories' })
-  async getAll(@Query() query: CategoryQueryDto) {
-    const categories = await this.categoriesService.findAll(query);
+  async getAll() {
+    const categories = await this.categoriesService.findAll();
 
     return {
       data: categories,
@@ -34,7 +31,7 @@ export class CategoriesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a category by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const category = await this.categoriesService.findOne(id);
 
     return {
@@ -55,10 +52,7 @@ export class CategoriesController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing category' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateCategoryDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
     const category = await this.categoriesService.update(id, body);
 
     return {
@@ -69,7 +63,7 @@ export class CategoriesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a category by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const category = await this.categoriesService.delete(id);
 
     return {

@@ -4,17 +4,14 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { CustomersService } from 'src/users/services/customers/customers.service';
 import {
   CreateCustomerDto,
-  CustomerQueryDto,
   UpdateCustomerDto,
 } from 'src/users/dtos/customer.dto';
 
@@ -24,8 +21,8 @@ export class CustomersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all customers' })
-  async getAll(@Query() query: CustomerQueryDto) {
-    const customers = await this.customersService.findAll(query);
+  async getAll() {
+    const customers = await this.customersService.findAll();
 
     return {
       data: customers,
@@ -34,7 +31,7 @@ export class CustomersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a customer by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const customer = await this.customersService.findOne(id);
 
     return {
@@ -55,10 +52,7 @@ export class CustomersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing customer' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateCustomerDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateCustomerDto) {
     const customer = await this.customersService.update(id, body);
 
     return {
@@ -69,7 +63,7 @@ export class CustomersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a customer by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const customer = await this.customersService.delete(id);
 
     return {

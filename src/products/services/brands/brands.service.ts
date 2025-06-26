@@ -1,36 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { Brand } from 'src/products/entities/brand.entity';
-import {
-  BrandQueryDto,
-  CreateBrandDto,
-  UpdateBrandDto,
-} from 'src/products/dtos/brand.dto';
+import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
 
 @Injectable()
 export class BrandsService {
-  constructor(
-    @InjectRepository(Brand) private brandsRepository: Repository<Brand>,
-  ) {}
+  constructor(@InjectModel(Brand.name) private brandModel: Model<Brand>) {}
 
-  async findAll(filters?: BrandQueryDto): Promise<Brand[]> {
-    const { limit, offset } = filters!;
-
-    const brands = await this.brandsRepository.find({
-      take: limit,
-      skip: offset,
-    });
-
+  async findAll(): Promise<Brand[]> {
+    const brands = await this.brandModel.find().exec();
     return brands;
   }
 
-  async findOne(id: number): Promise<Brand> {
-    const brand = await this.brandsRepository.findOne({
-      where: { id },
-      relations: { products: true },
-    });
+  async findOne(id: string): Promise<Brand> {
+    const brand = await this.brandModel.findById(id).lean().exec();
 
     if (!brand) throw new NotFoundException(`Brand #${id} not found`);
 
@@ -38,21 +23,34 @@ export class BrandsService {
   }
 
   async create(data: CreateBrandDto): Promise<Brand> {
-    const newBrand = this.brandsRepository.create(data);
-    await this.brandsRepository.save(newBrand);
-    return newBrand;
+    const newBrand = new this.brandModel(data);
+    const savedBrand = await newBrand.save();
+    return savedBrand.toObject();
   }
 
-  async update(id: number, changes: UpdateBrandDto): Promise<Brand> {
-    const brand = await this.findOne(id);
-    this.brandsRepository.merge(brand, changes);
-    const updatedBrand = await this.brandsRepository.save(brand);
+  async update(id: string, changes: UpdateBrandDto): Promise<Brand> {
+    const updatedBrand = await this.brandModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .lean()
+      .exec();
+
+    if (!updatedBrand) {
+      throw new NotFoundException(`Brand #${id} not found`);
+    }
+
     return updatedBrand;
   }
 
-  async delete(id: number): Promise<Brand> {
-    const brand = await this.findOne(id);
-    await this.brandsRepository.delete(brand.id);
-    return brand;
+  async delete(id: string): Promise<Brand> {
+    const deletedBrand = await this.brandModel
+      .findByIdAndDelete(id)
+      .lean()
+      .exec();
+
+    if (!deletedBrand) {
+      throw new NotFoundException(`Brand #${id} not found`);
+    }
+
+    return deletedBrand;
   }
 }

@@ -9,7 +9,7 @@ import { AppService } from './app.service';
 
 import { environments } from './enviroments';
 import appConfig from './config/index';
-import { appConfigSchema } from './config/config.scheman';
+import { appConfigSchema } from './config/config.schema';
 
 @Module({
   imports: [

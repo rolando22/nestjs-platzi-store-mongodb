@@ -4,19 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { BrandsService } from 'src/products/services/brands/brands.service';
-import {
-  BrandQueryDto,
-  CreateBrandDto,
-  UpdateBrandDto,
-} from 'src/products/dtos/brand.dto';
+import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
 
 @Controller('brands')
 export class BrandsController {
@@ -24,8 +18,8 @@ export class BrandsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all brands' })
-  async getAll(@Query() query: BrandQueryDto) {
-    const brands = await this.brandsService.findAll(query);
+  async getAll() {
+    const brands = await this.brandsService.findAll();
 
     return {
       data: brands,
@@ -34,7 +28,7 @@ export class BrandsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a brand by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const brand = await this.brandsService.findOne(id);
 
     return {
@@ -55,10 +49,7 @@ export class BrandsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing brand' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateBrandDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateBrandDto) {
     const brand = await this.brandsService.update(id, body);
 
     return {
@@ -69,7 +60,7 @@ export class BrandsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a brand by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const brand = await this.brandsService.delete(id);
 
     return {

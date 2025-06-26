@@ -1,42 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { OrderItem } from 'src/users/entities/order-item.entity';
-import { Order } from 'src/users/entities/order.entity';
-import { Product } from 'src/products/entities/product.entity';
 import {
   CreateOrderItemDto,
-  OrderItemQueryDto,
   UpdateOrderItemDto,
 } from 'src/users/dtos/order-item.dto';
 
 @Injectable()
 export class OrderItemsService {
   constructor(
-    @InjectRepository(OrderItem)
-    private orderItemsRepository: Repository<OrderItem>,
-    @InjectRepository(Order) private ordersRepository: Repository<Order>,
-    @InjectRepository(Product) private productsRepository: Repository<Product>,
+    @InjectModel(OrderItem.name) private orderItemModel: Model<OrderItem>,
   ) {}
 
-  async findAll(filters?: OrderItemQueryDto): Promise<OrderItem[]> {
-    const { limit, offset } = filters!;
-
-    const orderItems = await this.orderItemsRepository.find({
-      relations: { order: { customer: true }, product: true },
-      take: limit,
-      skip: offset,
-    });
-
+  async findAll(): Promise<OrderItem[]> {
+    const orderItems = await this.orderItemModel.find().exec();
     return orderItems;
   }
 
-  async findOne(id: number): Promise<OrderItem> {
-    const orderItem = await this.orderItemsRepository.findOne({
-      where: { id },
-      relations: { order: { customer: true }, product: true },
-    });
+  async findOne(id: string): Promise<OrderItem> {
+    const orderItem = await this.orderItemModel.findById(id).exec();
 
     if (!orderItem) throw new NotFoundException(`OrderItem #${id} not found.`);
 
@@ -44,64 +28,34 @@ export class OrderItemsService {
   }
 
   async create(data: CreateOrderItemDto): Promise<OrderItem> {
-    const newOrderItem = this.orderItemsRepository.create(data);
-    const order = await this.ordersRepository.findOne({
-      where: { id: data.orderId },
-      relations: { customer: true },
-    });
-
-    if (!order)
-      throw new NotFoundException(`Order #${data.orderId} not found.`);
-
-    const product = await this.productsRepository.findOne({
-      where: { id: data.productId },
-    });
-
-    if (!product)
-      throw new NotFoundException(`Product #${data.productId} not found.`);
-
-    newOrderItem.order = order;
-    newOrderItem.product = product;
-    const savedOrderItem = await this.orderItemsRepository.save(newOrderItem);
-    return savedOrderItem;
+    const newOrderItem = new this.orderItemModel(data);
+    const savedOrderItem = await newOrderItem.save();
+    return savedOrderItem.toObject();
   }
 
-  async update(id: number, changes: UpdateOrderItemDto): Promise<OrderItem> {
-    const orderItem = await this.findOne(id);
-    this.orderItemsRepository.merge(orderItem, changes);
+  async update(id: string, changes: UpdateOrderItemDto): Promise<OrderItem> {
+    const updatedOrderItem = await this.orderItemModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .lean()
+      .exec();
 
-    if (!orderItem) throw new NotFoundException(`OrderItem #${id} not found.`);
-
-    if (changes.orderId) {
-      const order = await this.ordersRepository.findOne({
-        where: { id: changes.orderId },
-        relations: { customer: true },
-      });
-
-      if (!order)
-        throw new NotFoundException(`Order #${changes.orderId} not found.`);
-
-      orderItem.order = order;
+    if (!updatedOrderItem) {
+      throw new NotFoundException(`OrderItem #${id} not found.`);
     }
 
-    if (changes.productId) {
-      const product = await this.productsRepository.findOne({
-        where: { id: changes.productId },
-      });
-
-      if (!product)
-        throw new NotFoundException(`Product #${changes.productId} not found.`);
-
-      orderItem.product = product;
-    }
-
-    const savedOrderItem = await this.orderItemsRepository.save(orderItem);
-    return savedOrderItem;
+    return updatedOrderItem;
   }
 
-  async delete(id: number): Promise<OrderItem> {
-    const orderItem = await this.findOne(id);
-    await this.orderItemsRepository.delete(orderItem.id);
-    return orderItem;
+  async delete(id: string): Promise<OrderItem> {
+    const deletedOrderItem = await this.orderItemModel
+      .findByIdAndDelete(id)
+      .lean()
+      .exec();
+
+    if (!deletedOrderItem) {
+      throw new NotFoundException(`OrderItem #${id} not found.`);
+    }
+
+    return deletedOrderItem;
   }
 }

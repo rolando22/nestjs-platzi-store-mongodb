@@ -1,35 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { Customer } from 'src/users/entities/customer.entity';
 import {
   CreateCustomerDto,
-  CustomerQueryDto,
   UpdateCustomerDto,
 } from 'src/users/dtos/customer.dto';
 
 @Injectable()
 export class CustomersService {
   constructor(
-    @InjectRepository(Customer)
-    private customersRepository: Repository<Customer>,
+    @InjectModel(Customer.name) private customerModel: Model<Customer>,
   ) {}
 
-  async findAll(filters?: CustomerQueryDto): Promise<Customer[]> {
-    const { limit, offset } = filters!;
-
-    const customers = await this.customersRepository.find({
-      take: limit,
-      skip: offset,
-    });
+  async findAll(): Promise<Customer[]> {
+    const customers = await this.customerModel.find().exec();
     return customers;
   }
 
-  async findOne(id: number): Promise<Customer> {
-    const customer = await this.customersRepository.findOne({
-      where: { id },
-    });
+  async findOne(id: string): Promise<Customer> {
+    const customer = await this.customerModel.findById(id).exec();
 
     if (!customer) throw new NotFoundException(`Customer #${id} not found`);
 
@@ -37,21 +28,34 @@ export class CustomersService {
   }
 
   async create(data: CreateCustomerDto): Promise<Customer> {
-    const newCustomer = this.customersRepository.create(data);
-    const savedCustomer = await this.customersRepository.save(newCustomer);
-    return savedCustomer;
+    const newCustomer = new this.customerModel(data);
+    const savedCustomer = await newCustomer.save();
+    return savedCustomer.toObject();
   }
 
-  async update(id: number, changes: UpdateCustomerDto): Promise<Customer> {
-    const customer = await this.findOne(id);
-    this.customersRepository.merge(customer, changes);
-    const updatedCustomer = this.customersRepository.save(customer);
+  async update(id: string, changes: UpdateCustomerDto): Promise<Customer> {
+    const updatedCustomer = await this.customerModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .lean()
+      .exec();
+
+    if (!updatedCustomer) {
+      throw new NotFoundException(`Customer #${id} not found`);
+    }
+
     return updatedCustomer;
   }
 
-  async delete(id: number): Promise<Customer> {
-    const customer = await this.findOne(id);
-    await this.customersRepository.delete(customer.id);
-    return customer;
+  async delete(id: string): Promise<Customer> {
+    const deletedCustomer = await this.customerModel
+      .findByIdAndDelete(id)
+      .lean()
+      .exec();
+
+    if (!deletedCustomer) {
+      throw new NotFoundException(`Customer #${id} not found`);
+    }
+
+    return deletedCustomer;
   }
 }

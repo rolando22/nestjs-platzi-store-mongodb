@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { Category } from 'src/products/entities/category.entity';
 import {
-  CategoryQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
@@ -12,26 +11,17 @@ import {
 @Injectable()
 export class CategoriesService {
   constructor(
-    @InjectRepository(Category)
-    private categoriesRepository: Repository<Category>,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async findAll(filters?: CategoryQueryDto): Promise<Category[]> {
-    const { limit, offset } = filters!;
-
-    const categories = await this.categoriesRepository.find({
-      take: limit,
-      skip: offset,
-    });
+  async findAll(): Promise<Category[]> {
+    const categories = await this.categoryModel.find().exec();
 
     return categories;
   }
 
-  async findOne(id: number): Promise<Category> {
-    const category = await this.categoriesRepository.findOne({
-      where: { id },
-      relations: { products: true },
-    });
+  async findOne(id: string): Promise<Category> {
+    const category = await this.categoryModel.findById(id).exec();
 
     if (!category) throw new NotFoundException(`Category #${id} not found`);
 
@@ -39,21 +29,34 @@ export class CategoriesService {
   }
 
   async create(data: CreateCategoryDto): Promise<Category> {
-    const newCategory = this.categoriesRepository.create(data);
-    const savedCategory = await this.categoriesRepository.save(newCategory);
-    return savedCategory;
+    const newCategory = new this.categoryModel(data);
+    const savedCategory = await newCategory.save();
+    return savedCategory.toObject();
   }
 
-  async update(id: number, changes: UpdateCategoryDto): Promise<Category> {
-    const category = await this.findOne(id);
-    this.categoriesRepository.merge(category, changes);
-    const updatedCategory = await this.categoriesRepository.save(category);
+  async update(id: string, changes: UpdateCategoryDto): Promise<Category> {
+    const updatedCategory = await this.categoryModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .lean()
+      .exec();
+
+    if (!updatedCategory) {
+      throw new NotFoundException(`Category #${id} not found`);
+    }
+
     return updatedCategory;
   }
 
-  async delete(id: number): Promise<Category> {
-    const category = await this.findOne(id);
-    await this.categoriesRepository.delete(id);
-    return category;
+  async delete(id: string): Promise<Category> {
+    const deletedCategory = await this.categoryModel
+      .findByIdAndDelete(id)
+      .lean()
+      .exec();
+
+    if (!deletedCategory) {
+      throw new NotFoundException(`Category #${id} not found`);
+    }
+
+    return deletedCategory;
   }
 }

@@ -4,19 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { UsersService } from 'src/users/services/users/users.service';
-import {
-  CreateUserDto,
-  UpdateUserDto,
-  UserQueryDto,
-} from 'src/users/dtos/user.dto';
+import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,8 +18,8 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  async getAll(@Query() query: UserQueryDto) {
-    const users = await this.usersService.findAll(query);
+  async getAll() {
+    const users = await this.usersService.findAll();
 
     return {
       data: users,
@@ -34,7 +28,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
 
     return {
@@ -64,10 +58,7 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing user' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUserDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateUserDto) {
     const user = await this.usersService.update(id, body);
 
     return {
@@ -78,7 +69,7 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const user = await this.usersService.delete(id);
 
     return {

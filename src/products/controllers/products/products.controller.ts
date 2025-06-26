@@ -4,17 +4,14 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { ProductsService } from 'src/products/services/products/products.service';
 import {
   CreateProductDto,
-  ProductQueryDto,
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
 
@@ -24,8 +21,8 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  async getAll(@Query() query: ProductQueryDto) {
-    const products = await this.productsService.findAll(query);
+  async getAll() {
+    const products = await this.productsService.findAll();
 
     return {
       data: products,
@@ -34,7 +31,7 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const product = await this.productsService.findOne(id);
 
     return {
@@ -55,10 +52,7 @@ export class ProductsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a existing product' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateProductDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateProductDto) {
     const product = await this.productsService.update(id, body);
 
     return {
@@ -67,26 +61,26 @@ export class ProductsController {
     };
   }
 
-  @Put(':id/category/:categoryId')
-  @ApiOperation({ summary: 'Add category to a existing product' })
-  async addCategoryToProduct(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ) {
-    const product = await this.productsService.addCategoryToProduct(
-      id,
-      categoryId,
-    );
+  // @Put(':id/category/:categoryId')
+  // @ApiOperation({ summary: 'Add category to a existing product' })
+  // async addCategoryToProduct(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Param('categoryId', ParseIntPipe) categoryId: number,
+  // ) {
+  //   const product = await this.productsService.addCategoryToProduct(
+  //     id,
+  //     categoryId,
+  //   );
 
-    return {
-      message: 'Category added to Product successfully',
-      data: product,
-    };
-  }
+  //   return {
+  //     message: 'Category added to Product successfully',
+  //     data: product,
+  //   };
+  // }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const product = await this.productsService.delete(id);
 
     return {
@@ -95,20 +89,20 @@ export class ProductsController {
     };
   }
 
-  @Delete(':id/category/:categoryId')
-  @ApiOperation({ summary: 'Delete a category from product by ID' })
-  async deleteCategoryFromProduct(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('categoryId', ParseIntPipe) categoryId: number,
-  ) {
-    const product = await this.productsService.deleteCategoryFromProduct(
-      id,
-      categoryId,
-    );
+  // @Delete(':id/category/:categoryId')
+  // @ApiOperation({ summary: 'Delete a category from product by ID' })
+  // async deleteCategoryFromProduct(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Param('categoryId', ParseIntPipe) categoryId: number,
+  // ) {
+  //   const product = await this.productsService.deleteCategoryFromProduct(
+  //     id,
+  //     categoryId,
+  //   );
 
-    return {
-      message: 'Category deleted from product successfully',
-      data: product,
-    };
-  }
+  //   return {
+  //     message: 'Category deleted from product successfully',
+  //     data: product,
+  //   };
+  // }
 }

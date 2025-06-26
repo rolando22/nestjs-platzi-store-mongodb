@@ -4,17 +4,14 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { OrderItemsService } from 'src/users/services/order-items/order-items.service';
 import {
   CreateOrderItemDto,
-  OrderItemQueryDto,
   UpdateOrderItemDto,
 } from 'src/users/dtos/order-item.dto';
 
@@ -24,8 +21,8 @@ export class OrderItemsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all order items' })
-  async getAll(@Query() query: OrderItemQueryDto) {
-    const orderItems = await this.orderItemsService.findAll(query);
+  async getAll() {
+    const orderItems = await this.orderItemsService.findAll();
 
     return {
       data: orderItems,
@@ -34,7 +31,7 @@ export class OrderItemsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a order item by ID' })
-  async getOne(@Param('id', ParseIntPipe) id: number) {
+  async getOne(@Param('id') id: string) {
     const orderItem = await this.orderItemsService.findOne(id);
 
     return {
@@ -55,10 +52,7 @@ export class OrderItemsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing order item' })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateOrderItemDto,
-  ) {
+  async update(@Param('id') id: string, @Body() body: UpdateOrderItemDto) {
     const orderItem = await this.orderItemsService.update(id, body);
 
     return {
@@ -69,7 +63,7 @@ export class OrderItemsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a order item by ID' })
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: string) {
     const orderItem = await this.orderItemsService.delete(id);
 
     return {
