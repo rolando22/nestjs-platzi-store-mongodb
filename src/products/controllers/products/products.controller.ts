@@ -6,12 +6,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { ProductsService } from 'src/products/services/products/products.service';
 import {
   CreateProductDto,
+  ProductQueryDto,
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
@@ -22,8 +24,8 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  async getAll() {
-    const products = await this.productsService.findAll();
+  async getAll(@Query() query: ProductQueryDto) {
+    const products = await this.productsService.findAll(query);
 
     return {
       data: products,

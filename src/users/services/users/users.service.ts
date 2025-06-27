@@ -3,14 +3,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User } from 'src/users/entities/user.entity';
-import { CreateUserDto, UpdateUserDto } from 'src/users/dtos/user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  UserQueryDto,
+} from 'src/users/dtos/user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async findAll(): Promise<User[]> {
-    const users = await this.userModel.find().exec();
+  async findAll(filters?: UserQueryDto): Promise<User[]> {
+    const { limit = 10, offset = 0 } = filters!;
+
+    const users = await this.userModel.find().skip(offset).limit(limit).exec();
+
     return users;
   }
 

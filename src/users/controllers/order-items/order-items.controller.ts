@@ -6,12 +6,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { OrderItemsService } from 'src/users/services/order-items/order-items.service';
 import {
   CreateOrderItemDto,
+  OrderItemQueryDto,
   UpdateOrderItemDto,
 } from 'src/users/dtos/order-item.dto';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
@@ -22,8 +24,8 @@ export class OrderItemsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all order items' })
-  async getAll() {
-    const orderItems = await this.orderItemsService.findAll();
+  async getAll(@Query() query: OrderItemQueryDto) {
+    const orderItems = await this.orderItemsService.findAll(query);
 
     return {
       data: orderItems,

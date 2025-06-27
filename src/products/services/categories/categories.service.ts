@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 
 import { Category } from 'src/products/entities/category.entity';
 import {
+  CategoryQueryDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
@@ -14,8 +15,14 @@ export class CategoriesService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
-  async findAll(): Promise<Category[]> {
-    const categories = await this.categoryModel.find().exec();
+  async findAll(filters?: CategoryQueryDto): Promise<Category[]> {
+    const { limit = 10, offset = 0 } = filters!;
+
+    const categories = await this.categoryModel
+      .find()
+      .skip(offset)
+      .limit(limit)
+      .exec();
 
     return categories;
   }

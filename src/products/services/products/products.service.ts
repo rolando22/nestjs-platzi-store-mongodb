@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { Product } from 'src/products/entities/product.entity';
 import {
   CreateProductDto,
+  ProductQueryDto,
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
 
@@ -14,8 +15,16 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    const products = await this.productModel.find().lean().exec();
+  async findAll(filter?: ProductQueryDto): Promise<Product[]> {
+    const { limit = 10, offset = 0 } = filter!;
+
+    const products = await this.productModel
+      .find()
+      .skip(offset)
+      .limit(limit)
+      .lean()
+      .exec();
+
     return products;
   }
 

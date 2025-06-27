@@ -3,14 +3,26 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Brand } from 'src/products/entities/brand.entity';
-import { CreateBrandDto, UpdateBrandDto } from 'src/products/dtos/brand.dto';
+import {
+  BrandQueryDto,
+  CreateBrandDto,
+  UpdateBrandDto,
+} from 'src/products/dtos/brand.dto';
 
 @Injectable()
 export class BrandsService {
   constructor(@InjectModel(Brand.name) private brandModel: Model<Brand>) {}
 
-  async findAll(): Promise<Brand[]> {
-    const brands = await this.brandModel.find().exec();
+  async findAll(filters?: BrandQueryDto): Promise<Brand[]> {
+    const { limit = 10, offset = 0 } = filters!;
+
+    const brands = await this.brandModel
+      .find()
+      .skip(offset)
+      .limit(limit)
+      .lean()
+      .exec();
+
     return brands;
   }
 
