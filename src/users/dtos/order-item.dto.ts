@@ -1,16 +1,12 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsPositive } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsPositive } from 'class-validator';
 
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 export class CreateOrderItemDto {
-  @IsPositive()
+  @IsMongoId()
   @IsNotEmpty()
-  readonly orderId: number;
-
-  @IsPositive()
-  @IsNotEmpty()
-  readonly productId: number;
+  readonly product: string;
 
   @IsPositive()
   @IsNotEmpty()

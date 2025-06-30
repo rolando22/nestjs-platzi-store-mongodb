@@ -1,6 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
+import { OmitType, PartialType } from '@nestjs/swagger';
 import {
-  // IsArray,
+  IsArray,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -35,17 +36,18 @@ export class CreateProductDto {
   @IsNotEmpty()
   readonly image: string;
 
-  // @IsNumber()
-  // @IsNotEmpty()
-  // @IsPositive()
-  // readonly brandId: number;
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly brand: string;
 
-  // @IsArray()
-  // @IsNotEmpty()
-  // readonly categoriesIds: number[];
+  @IsArray()
+  @IsNotEmpty()
+  readonly categories: string[];
 }
 
-export class UpdateProductDto extends PartialType(CreateProductDto) {}
+export class UpdateProductDto extends PartialType(
+  OmitType(CreateProductDto, ['categories']),
+) {}
 
 export class ProductQueryDto extends PaginationDto {
   @ValidateIf((obj: ProductQueryDto) => obj.maxPrice !== undefined)

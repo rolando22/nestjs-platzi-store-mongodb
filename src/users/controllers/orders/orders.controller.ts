@@ -12,6 +12,7 @@ import { ApiOperation } from '@nestjs/swagger';
 
 import { OrdersService } from 'src/users/services/orders/orders.service';
 import {
+  AddItemToOrderDto,
   CreateOrderDto,
   OrderQueryDto,
   UpdateOrderDto,
@@ -53,6 +54,25 @@ export class OrdersController {
     };
   }
 
+  @Post(':id/product/:productId')
+  @ApiOperation({ summary: 'Create a new order item' })
+  async addAndUpdateItemToOrder(
+    @Param('id', MongoIdPipe) id: string,
+    @Param('productId', MongoIdPipe) productId: string,
+    @Body() body: AddItemToOrderDto,
+  ) {
+    const newOrder = await this.ordersService.addAndUpdateItemToOrder(
+      id,
+      productId,
+      body,
+    );
+
+    return {
+      message: 'Order item created/updated successfully',
+      data: newOrder,
+    };
+  }
+
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing order' })
   async update(
@@ -74,6 +94,20 @@ export class OrdersController {
 
     return {
       message: 'Order deleted successfully',
+      data: order,
+    };
+  }
+
+  @Delete(':id/item/:itemId')
+  @ApiOperation({ summary: 'Delete a order by ID' })
+  async removeItemFromOrder(
+    @Param('id', MongoIdPipe) id: string,
+    @Param('itemId', MongoIdPipe) itemId: string,
+  ) {
+    const order = await this.ordersService.removeItemFromOrder(id, itemId);
+
+    return {
+      message: 'Order item deleted successfully',
       data: order,
     };
   }

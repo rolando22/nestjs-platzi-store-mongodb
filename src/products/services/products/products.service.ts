@@ -27,6 +27,8 @@ export class ProductsService {
 
     const products = await this.productModel
       .find(queryFilters)
+      .populate('brand', 'name')
+      .populate('categories', 'name')
       .skip(offset)
       .limit(limit)
       .lean()
@@ -36,7 +38,12 @@ export class ProductsService {
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.productModel.findById(id).lean().exec();
+    const product = await this.productModel
+      .findById(id)
+      .populate('brand', 'name')
+      .populate('categories', 'name')
+      .lean()
+      .exec();
 
     if (!product) throw new NotFoundException(`Product #${id} not found`);
 
