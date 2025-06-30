@@ -4,6 +4,7 @@ export const appConfigSchema = Joi.object({
   // APP
   NODE_ENV: Joi.string().valid('dev', 'stag', 'prod', 'test'),
   PORT: Joi.number().required(),
+  API_KEY: Joi.string().required(),
   // DATABASE MONGO
   MONGO_DB: Joi.string().required(),
   MONGO_INITDB_ROOT_USERNAME: Joi.string().required(),

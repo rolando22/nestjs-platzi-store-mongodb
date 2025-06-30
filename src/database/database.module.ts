@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { databaseConnection, mongooseDatabaseConnection } from './connection';
 import appConfig from '../config';
-import { MongooseModule } from '@nestjs/mongoose';
 
 @Global()
 @Module({
