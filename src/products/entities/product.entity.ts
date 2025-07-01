@@ -33,19 +33,17 @@ export const ProductSchema = SchemaFactory.createForClass(Product);
 ProductSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  transform: (_, ret) => {
-    ret.id = ret._id.toString();
-    ret._id = ret._id.toString();
-    return ret;
+  transform: (_, returnedObject) => {
+    returnedObject._id = (returnedObject._id as Types.ObjectId).toString();
+    return returnedObject;
   },
 });
 
 ProductSchema.set('toObject', {
   virtuals: true,
   versionKey: false,
-  transform: (_, ret) => {
-    ret.id = ret._id.toString();
-    ret._id = ret._id.toString();
-    return ret;
+  transform: (_, returnedObject) => {
+    returnedObject._id = (returnedObject._id as Types.ObjectId).toString();
+    return returnedObject;
   },
 });

@@ -31,10 +31,9 @@ export class ProductsService {
       .populate('categories', 'name')
       .skip(offset)
       .limit(limit)
-      .lean()
       .exec();
 
-    return products;
+    return products.map((product) => product.toObject());
   }
 
   async findOne(id: string): Promise<Product> {
@@ -42,12 +41,11 @@ export class ProductsService {
       .findById(id)
       .populate('brand', 'name')
       .populate('categories', 'name')
-      .lean()
       .exec();
 
     if (!product) throw new NotFoundException(`Product #${id} not found`);
 
-    return product;
+    return product.toObject();
   }
 
   async create(data: CreateProductDto): Promise<Product> {
@@ -59,27 +57,23 @@ export class ProductsService {
   async update(id: string, changes: UpdateProductDto): Promise<Product> {
     const updatedProduct = await this.productModel
       .findByIdAndUpdate(id, { $set: changes }, { new: true })
-      .lean()
       .exec();
 
     if (!updatedProduct) {
       throw new NotFoundException(`Product #${id} not found`);
     }
 
-    return updatedProduct;
+    return updatedProduct.toObject();
   }
 
   async delete(id: string): Promise<Product> {
-    const deletedProduct = await this.productModel
-      .findByIdAndDelete(id)
-      .lean()
-      .exec();
+    const deletedProduct = await this.productModel.findByIdAndDelete(id).exec();
 
     if (!deletedProduct) {
       throw new NotFoundException(`Product #${id} not found`);
     }
 
-    return deletedProduct;
+    return deletedProduct.toObject();
   }
 
   // async addCategoryToProduct(
