@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
@@ -16,13 +17,17 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from 'src/products/dtos/category.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
+@UseGuards(JwtAuthGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Get all categories' })
   async getAll(@Query() query: CategoryQueryDto) {
     const categories = await this.categoriesService.findAll(query);
@@ -33,6 +38,7 @@ export class CategoriesController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get a category by ID' })
   async getOne(@Param('id', MongoIdPipe) id: string) {
     const category = await this.categoriesService.findOne(id);
