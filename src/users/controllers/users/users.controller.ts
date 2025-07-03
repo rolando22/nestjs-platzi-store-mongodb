@@ -18,9 +18,13 @@ import {
   UserQueryDto,
 } from 'src/users/dtos/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/role.model';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}

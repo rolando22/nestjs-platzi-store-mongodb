@@ -18,10 +18,13 @@ import {
   UpdateProductDto,
 } from 'src/products/dtos/product.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/role.model';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
@@ -49,6 +52,7 @@ export class ProductsController {
   }
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Create a new product' })
   async create(@Body() body: CreateProductDto) {
     const newProduct = await this.productsService.create(body);
@@ -60,6 +64,7 @@ export class ProductsController {
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Update a existing product' })
   async update(
     @Param('id', MongoIdPipe) id: string,
@@ -91,6 +96,7 @@ export class ProductsController {
   // }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete a product by ID' })
   async delete(@Param('id', MongoIdPipe) id: string) {
     const product = await this.productsService.delete(id);

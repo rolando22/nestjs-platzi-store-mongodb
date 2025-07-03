@@ -18,10 +18,13 @@ import {
   UpdateBrandDto,
 } from 'src/products/dtos/brand.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/role.model';
 import { MongoIdPipe } from 'src/common/pipes/mongo-id.pipe';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('brands')
 export class BrandsController {
   constructor(private brandsService: BrandsService) {}
@@ -49,6 +52,7 @@ export class BrandsController {
   }
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Create a new brand' })
   async create(@Body() body: CreateBrandDto) {
     const newBrand = await this.brandsService.create(body);
@@ -60,6 +64,7 @@ export class BrandsController {
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Update an existing brand' })
   async update(
     @Param('id', MongoIdPipe) id: string,
@@ -74,6 +79,7 @@ export class BrandsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete a brand by ID' })
   async delete(@Param('id', MongoIdPipe) id: string) {
     const brand = await this.brandsService.delete(id);
